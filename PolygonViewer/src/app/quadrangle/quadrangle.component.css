@@ -1,0 +1,21 @@
+canvas {
+  padding-left:400px;
+  padding-right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: 900px;
+}
+
+.svg-container {
+  margin-top: 20px;  /* Przesunięcie od topbara */
+  margin-left: 20px; /* Przesunięcie od lewej strony */
+}
+
+svg {
+  margin-top: 20px;  /* Przesunięcie od topbara */
+  background-color: #f8f9fa; /* Opcjonalne: dodanie tła dla lepszej widoczności */
+}
+span{
+ margin-left: 20px;
+}

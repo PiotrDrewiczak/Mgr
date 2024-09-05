@@ -1,0 +1,14 @@
+<div>
+  <label for="quadrangle-select">Select Quadrangle:</label>
+  <select id="quadrangle-select" [(ngModel)]="selectedQuadrangleIndex" (change)="selectQuadrangle()">
+    <option *ngFor="let quadrangle of quadrangles; let i = index" [value]="i">
+      Quadrangle {{ i + 1 }}
+    </option>
+  </select>
+  
+  <span>Coverage Percentage: {{ coveragePercentage | number:'1.2-2' }}%</span>
+</div>
+
+<div class="quadrangle-container">
+  <svg #svg width="1600" height="1500"></svg>
+</div>

@@ -1,0 +1,35 @@
+body {
+    padding-top: 56px;
+  }
+  
+  .container-fluid {
+    padding-top: 20px;
+  }
+
+  /* app.component.css */
+.container-fluid {
+  display: flex;
+}
+
+.polygon-container,
+.triangulation-container {
+  flex: 1;
+  padding: 10px; /* Adjust as needed */
+}
+
+.polygon-container {
+  border: 1px solid #ccc; /* Optional: For visual separation */
+}
+
+.triangulation-container {
+  border: 1px solid #ccc; /* Optional: For visual separation */
+}
+.quadriangle-container {
+  border: 1px solid #ccc; /* Optional: For visual separation */
+  padding: 10px; /* Adjust as needed */
+}
+/* Ensure the SVG elements inside the components scale properly */
+svg {
+  max-width: 100%;
+  height: auto;
+}
