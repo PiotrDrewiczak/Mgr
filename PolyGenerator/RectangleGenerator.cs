@@ -5,7 +5,7 @@ namespace PolyGenerator
 {
     public class RectangleGenerator : IRectangleGenerator
     {
-        public List<RectanglesModel> GenerateQuadrilateral(string pythonPath, string pythonRectangleScriptPath, List<List<QuadrangulationModel>> quadranglesModels)
+        public List<List<RectanglesModel>> GenerateQuadrilateral(string pythonPath, string pythonRectangleScriptPath, List<List<QuadrangulationModel>> quadranglesModels)
         {
             return PythonRunner.ProcessQuadrilaterals(
                 pythonPath,

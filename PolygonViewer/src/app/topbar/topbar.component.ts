@@ -31,7 +31,7 @@ export class TopbarComponent {
 
   generateRectangles() {
     const triangulationData = this.triangulationService.getTriangulationData();
-    this.quadrangleService.loadQuadrulationData(triangulationData).subscribe((data: Rectangles[]) => {
+    this.quadrangleService.loadQuadrulationData(triangulationData).subscribe((data: Rectangles[][]) => {
       this.quadrangleService.setQuadrangleData(data);
     });
   }

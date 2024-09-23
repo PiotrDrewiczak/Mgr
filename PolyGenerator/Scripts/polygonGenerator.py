@@ -5,7 +5,6 @@ from polygenerator import random_polygon
 import random
 
 def main(num_polygons, num_points, output_file):
-    # this is just so that you can reproduce te same results
     random.seed()
 
     polygons = []
@@ -22,7 +21,6 @@ def main(num_polygons, num_points, output_file):
         for polygon in polygons
     ]
 
-    # Zapisz wynik w pliku JSON
     with open(output_file, 'w') as f:
         json.dump({
             "polygons": [polygon.tolist() for polygon in polygons_int],

@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using PolyGenerator.Models;
 using System.Diagnostics;
-using System.Reflection.PortableExecutable;
 
 namespace PolyGenerator
 {
@@ -47,12 +46,11 @@ namespace PolyGenerator
 
                 polygons = polygonPointsList?.Select(polygonPoints =>
                 {
-                    // Tworzenie listy wierzchołków dla wielokąta
+
                     var vertices = polygonPoints
                         .Select(pointList => new PointModel(pointList[0], pointList[1]))
                         .ToList();
 
-                    // Tworzenie obiektu PolygonModel i obliczanie pola
                     var polygonModel = new PolygonModel
                     {
                         Vertices = vertices,
@@ -70,36 +68,43 @@ namespace PolyGenerator
             return polygons;
         }
 
-        public static List<RectanglesModel> ProcessQuadrilaterals(string pythonPath, string pythonScriptPath, List<List<QuadrangulationModel>> allQuadrilateralCombinations)
+        public static List<List<RectanglesModel>> ProcessQuadrilaterals(string pythonPath, string pythonScriptPath, List<List<QuadrangulationModel>> allQuadrilateralCombinations)
         {
-            var rectanglesModelList = new List<RectanglesModel>();
+            var allRectanglesList = new List<List<RectanglesModel>>();
 
-            var start = new ProcessStartInfo
+            for (int triangulationIndex = 0; triangulationIndex < allQuadrilateralCombinations.Count; triangulationIndex++)
             {
-                FileName = pythonPath,
-                Arguments = pythonScriptPath,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true
-            };
+                var start = new ProcessStartInfo
+                {
+                    FileName = pythonPath,
+                    Arguments = $"\"{pythonScriptPath}\"",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true
+                };
 
-            foreach (var quadrangulation in allQuadrilateralCombinations)
-            {
-                RectanglesModel? bestRectangleModel = null;
-                double maxArea = 0;
+                var quadrangulation = allQuadrilateralCombinations[triangulationIndex];
+                var rectanglesForCurrentTriangulation = new List<RectanglesModel>();
 
                 foreach (var configuration in quadrangulation)
                 {
-                    // Przekształć dane czworokątów do formatu JSON
+                    // Przekształć dane czworokątów do formatu JSON oraz dodaj trójkąty niesparowane
                     string quadrilateralJson = JsonConvert.SerializeObject(new
                     {
                         quadrilaterals = configuration.Quadrangles.Select(quad => new List<List<double>>
-                          {
-                          new List<double>{ quad.A.X, quad.A.Y },
-                          new List<double>{ quad.B.X, quad.B.Y },
-                          new List<double>{ quad.C.X, quad.C.Y },
-                          new List<double>{ quad.D.X, quad.D.Y }}).ToList()
+                {
+                    new List<double> { quad.A.X, quad.A.Y },
+                    new List<double> { quad.B.X, quad.B.Y },
+                    new List<double> { quad.C.X, quad.C.Y },
+                    new List<double> { quad.D.X, quad.D.Y }
+                }).ToList(),
+                        unpairedTriangles = configuration.UnpairedTriangles.Select(triangle => new List<List<double>>
+                {
+                    new List<double> { triangle.A.X, triangle.A.Y },
+                    new List<double> { triangle.B.X, triangle.B.Y },
+                    new List<double> { triangle.C.X, triangle.C.Y }
+                }).ToList()
                     });
 
                     using (Process? process = Process.Start(start))
@@ -120,7 +125,6 @@ namespace PolyGenerator
 
                             try
                             {
-                                // Deserializacja wyników z Pythona
                                 var data = JsonConvert.DeserializeObject<Dictionary<string, List<List<double>>>>(result ?? string.Empty);
 
                                 if (data != null && data.ContainsKey("rectangles"))
@@ -133,13 +137,13 @@ namespace PolyGenerator
                                         rect[3]   // Height
                                     )).ToList();
 
-                                    double totalArea = rectangles.Sum(r => r.Width * r.Height);
+                                    double totalArea = rectangles.Sum(r => r.Area);
 
-                                    if (totalArea > maxArea)
+                                    rectanglesForCurrentTriangulation.Add(new RectanglesModel
                                     {
-                                        maxArea = totalArea;
-                                        bestRectangleModel = new RectanglesModel { Rectangles = rectangles };
-                                    }
+                                        Rectangles = rectangles,
+                                        TotalArea = totalArea
+                                    });
                                 }
                                 else
                                 {
@@ -154,14 +158,12 @@ namespace PolyGenerator
                     }
                 }
 
-                if (bestRectangleModel != null)
-                {
-                    rectanglesModelList.Add(bestRectangleModel);
-                }
+                allRectanglesList.Add(rectanglesForCurrentTriangulation);
             }
 
-            return rectanglesModelList;
+            return allRectanglesList;
         }
+
     }
 }
 

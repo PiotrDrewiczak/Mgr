@@ -5,8 +5,10 @@
       Quadrangle {{ i + 1 }}
     </option>
   </select>
-  
   <span>Coverage Percentage: {{ coveragePercentage | number:'1.2-2' }}%</span>
+  
+  <!-- Nowy przycisk do zapisania obrazków -->
+  <button (click)="saveAll()">Save All</button>
 </div>
 
 <div class="quadrangle-container">

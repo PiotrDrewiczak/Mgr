@@ -12,41 +12,33 @@ namespace PolyGenerator.Scripts
             foreach (var triangulation in triangulations)
             {
                 var triangles = triangulation.Triangles;
-                var pairs = FindAllPairs(triangles);
-                var quadrangulations = new List<List<QuadrangleModel>>();
+                var pairs = FindAllPairs(triangles);  // Znalezienie wszystkich par trójkątów
+                var quadrangulations = new List<List<(QuadrangleModel, TriangleModel, TriangleModel)>>();
 
-                GenerateAllConfigurations(pairs, new HashSet<TriangleModel>(), new List<QuadrangleModel>(), quadrangulations);
+                // HashSet do przechowywania unikalnych konfiguracji
+                var uniqueConfigurations = new HashSet<string>();
 
-                var quadrangulationModels = quadrangulations.Select(qList => new QuadrangulationModel { Quadrangles = qList }).ToList();
+                // Generowanie wszystkich konfiguracji czworokątów
+                GenerateAllConfigurations(pairs, new HashSet<TriangleModel>(), new List<(QuadrangleModel, TriangleModel, TriangleModel)>(), quadrangulations, uniqueConfigurations);
+
+                // Dodawanie niesparowanych trójkątów do każdej konfiguracji
+                var quadrangulationModels = quadrangulations.Select(qList => new QuadrangulationModel
+                {
+                    Quadrangles = qList.Select(q => q.Item1).ToList(), // Przekształcamy listę czworokątów
+                    UnpairedTriangles = triangles.Except(qList.SelectMany(q => new List<TriangleModel> { q.Item2, q.Item3 })).ToList()  // Znajdujemy niesparowane trójkąty
+                }).ToList();
+
                 allQuadrangulations.Add(quadrangulationModels);
             }
 
             return allQuadrangulations;
         }
 
-        private List<(TriangleModel, TriangleModel)> FindAllPairs(List<TriangleModel> triangles)
-        {
-            var pairs = new List<(TriangleModel, TriangleModel)>();
-
-            for (int i = 0; i < triangles.Count; i++)
-            {
-                for (int j = i + 1; j < triangles.Count; j++)
-                {
-                    var sharedVertices = GetSharedVertices(triangles[i], triangles[j]);
-                    if (sharedVertices.Count == 2)
-                    {
-                        pairs.Add((triangles[i], triangles[j]));
-                    }
-                }
-            }
-
-            return pairs;
-        }
-
         private void GenerateAllConfigurations(List<(TriangleModel, TriangleModel)> pairs,
                                                HashSet<TriangleModel> usedTriangles,
-                                               List<QuadrangleModel> currentQuadrangulation,
-                                               List<List<QuadrangleModel>> allQuadrangulations)
+                                               List<(QuadrangleModel, TriangleModel, TriangleModel)> currentQuadrangulation,
+                                               List<List<(QuadrangleModel, TriangleModel, TriangleModel)>> allQuadrangulations,
+                                               HashSet<string> uniqueConfigurations)
         {
             bool addedNew = false;
 
@@ -61,13 +53,15 @@ namespace PolyGenerator.Scripts
 
                     if (quadrangle != null)
                     {
-                        currentQuadrangulation.Add(quadrangle);
+                        currentQuadrangulation.Add((quadrangle, t1, t2));
                         usedTriangles.Add(t1);
                         usedTriangles.Add(t2);
                         addedNew = true;
 
-                        GenerateAllConfigurations(pairs, usedTriangles, currentQuadrangulation, allQuadrangulations);
+                        // Rekurencja - generowanie kolejnych konfiguracji
+                        GenerateAllConfigurations(pairs, usedTriangles, currentQuadrangulation, allQuadrangulations, uniqueConfigurations);
 
+                        // Cofnięcie ostatniego kroku (backtracking)
                         currentQuadrangulation.RemoveAt(currentQuadrangulation.Count - 1);
                         usedTriangles.Remove(t1);
                         usedTriangles.Remove(t2);
@@ -75,10 +69,58 @@ namespace PolyGenerator.Scripts
                 }
             }
 
+            // Jeśli nie dodano nowych czworokątów, zapisz bieżącą konfigurację
             if (!addedNew && currentQuadrangulation.Count > 0)
             {
-                allQuadrangulations.Add(new List<QuadrangleModel>(currentQuadrangulation));
+                // Tworzymy klucz na podstawie wierzchołków czworokątów (sortowanie czworokątów i ich wierzchołków)
+                var configurationKey = GenerateConfigurationKey(currentQuadrangulation.Select(q => q.Item1).ToList());
+
+                // Sprawdzamy unikalność konfiguracji
+                if (!uniqueConfigurations.Contains(configurationKey))
+                {
+                    uniqueConfigurations.Add(configurationKey);
+                    allQuadrangulations.Add(new List<(QuadrangleModel, TriangleModel, TriangleModel)>(currentQuadrangulation));
+                }
             }
+        }
+
+        // Tworzenie unikalnego klucza na podstawie całej konfiguracji czworokątów
+        private string GenerateConfigurationKey(List<QuadrangleModel> quadrangles)
+        {
+            var sortedQuadrangles = quadrangles.Select(q =>
+            {
+                var vertices = new List<PointModel> { q.A, q.B, q.C, q.D };
+                // Sortujemy wierzchołki według współrzędnych
+                vertices.Sort((p1, p2) =>
+                {
+                    if (p1.X == p2.X)
+                        return p1.Y.CompareTo(p2.Y);
+                    return p1.X.CompareTo(p2.X);
+                });
+                return vertices;
+            }).OrderBy(q => q.First().X).ThenBy(q => q.First().Y); // Sortowanie czworokątów po pierwszym wierzchołku
+
+            // Tworzymy unikalny klucz na podstawie uporządkowanych wierzchołków czworokątów
+            return string.Join("|", sortedQuadrangles.Select(v => string.Join(",", v.Select(p => $"{p.X},{p.Y}"))));
+        }
+
+        private List<(TriangleModel, TriangleModel)> FindAllPairs(List<TriangleModel> triangles)
+        {
+            var pairs = new List<(TriangleModel, TriangleModel)>();
+
+            for (int i = 0; i < triangles.Count; i++)
+            {
+                for (int j = i + 1; j < triangles.Count; j++)
+                {
+                    var sharedVertices = GetSharedVertices(triangles[i], triangles[j]);
+                    if (sharedVertices.Count == 2)
+                    {
+                        pairs.Add((triangles[i], triangles[j]));  // Dodajemy pary trójkątów z dwoma wspólnymi wierzchołkami
+                    }
+                }
+            }
+
+            return pairs;
         }
 
         private List<PointModel> GetSharedVertices(TriangleModel t1, TriangleModel t2)
@@ -96,14 +138,14 @@ namespace PolyGenerator.Scripts
             if (uniqueVerticesT1.Count == 1 && uniqueVerticesT2.Count == 1)
             {
                 return new QuadrangleModel(
-                    uniqueVerticesT1[0],
-                    sharedVertices[0],
-                    uniqueVerticesT2[0],
-                    sharedVertices[1]
+                    uniqueVerticesT1[0],  // Wierzchołek z t1
+                    sharedVertices[0],    // Wspólny wierzchołek
+                    uniqueVerticesT2[0],  // Wierzchołek z t2
+                    sharedVertices[1]     // Wspólny wierzchołek
                 );
             }
 
-            throw new InvalidOperationException("Nie można stworzyć czworokąta z podanych trójkątów.");
+            return null;  // Nie można utworzyć czworokąta
         }
     }
-}
+    }

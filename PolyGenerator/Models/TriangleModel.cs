@@ -2,9 +2,17 @@
 {
     public class TriangleModel
     {
-        public required PointModel A { get; set; }
-        public required PointModel B { get; set; }
-        public required PointModel C { get; set; }
+        public TriangleModel()
+        {
+            
+        }
+        public TriangleModel(PointModel a, PointModel b, PointModel c)
+        {
+            this.A = a; this.B = b; this.C = c;
+        }
+        public  PointModel A { get; set; }
+        public  PointModel B { get; set; }
+        public  PointModel C { get; set; }
 
         public List<PointModel> GetVertices()
         {

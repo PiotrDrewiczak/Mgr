@@ -24,7 +24,7 @@ namespace WebApi.CP.Controllers
         }
 
         [HttpPost("quadrulate")]
-        public List<RectanglesModel> Quadrangle([FromBody] TriangulationModel[] triangulations)
+        public List<List<RectanglesModel>> Quadrangle([FromBody] TriangulationModel[] triangulations)
         {
             var quadrangles = quadrulation.GenerateQuadrangulations(triangulations.ToList());
 
