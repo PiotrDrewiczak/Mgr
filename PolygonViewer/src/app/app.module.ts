@@ -13,6 +13,7 @@ import { TriangulationComponent } from './triangulation/triangulation.component'
 import { TriangulationService } from './triangulation/service/triangulation.service';
 import { QuadrangleComponent } from './quadrangle/quadrangle.component';
 import { QuadrangleService } from './quadrangle/service/quadrangle.service';
+import { ExcelExportService } from './quadrangle/service/excel-export.service';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,7 @@ import { QuadrangleService } from './quadrangle/service/quadrangle.service';
     HttpClientModule,
     FormsModule 
   ],
-  providers: [PolygonService,TriangulationService,QuadrangleService],
+  providers: [PolygonService,TriangulationService,QuadrangleService,ExcelExportService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

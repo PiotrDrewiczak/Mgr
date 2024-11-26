@@ -15,7 +15,7 @@ export class PolygonComponent implements OnInit, OnDestroy {
   private polygonsSubscription: Subscription = new Subscription();
   polygonsData: Polygon[] = []; 
   selectedPolygonIndex: number = 0;
-
+  viewBox: string = "0 0 1 1";  // Normalizowany zakres, od 0 do 1
   constructor(private polygonService: PolygonService) {}
 
   ngOnInit(): void {

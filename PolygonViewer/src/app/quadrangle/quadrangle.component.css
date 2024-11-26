@@ -5,6 +5,7 @@ canvas {
   margin-right: auto;
   display: block;
   width: 900px;
+  background-color: white;
 }
 
 .svg-container {
@@ -18,4 +19,9 @@ svg {
 }
 span{
  margin-left: 20px;
+}
+
+#hiddenSvg {
+
+  background-color:white;
 }

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using PolyGenerator;
 using PolyGenerator.Interfaces;
 using PolyGenerator.Models;
+using PolyGenerator.Models.Triangle;
 using WebApi.CP.Models;
 
 namespace WebApi.CP.Controllers

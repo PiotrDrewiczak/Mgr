@@ -2,10 +2,8 @@ import sys
 import json
 import numpy as np
 from polygenerator import random_polygon
-import random
 
 def main(num_polygons, num_points, output_file):
-    random.seed()
 
     polygons = []
     for _ in range(num_polygons):

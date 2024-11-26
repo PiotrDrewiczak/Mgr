@@ -1,7 +1,40 @@
-.nav-link {
-  cursor: pointer;
+/* Domyślny styl dla przycisków: szary */
+.navbar-nav .nav-item .btn {
+  background-color: #d3d3d3; /* Szary kolor */
+  color: black; /* Kolor tekstu */
+  border: none;
+  transition: background-color 0.3s ease, color 0.3s ease; /* Animacja zmiany koloru */
 }
 
-.navbar-brand {
-  font-weight: bold;
+/* Styl po najechaniu myszką: złoty */
+.navbar-nav .nav-item .btn:hover {
+  background-color: #A4B7B9 ; /* Złoty kolor */
+  color: white; /* Kolor tekstu */
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8); /* Białe tło z przezroczystością */
+  z-index: 1000;
+}
+
+.spinner {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

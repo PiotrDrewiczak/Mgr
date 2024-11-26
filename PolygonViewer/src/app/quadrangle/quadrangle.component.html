@@ -6,9 +6,11 @@
     </option>
   </select>
   <span>Coverage Percentage: {{ coveragePercentage | number:'1.2-2' }}%</span>
-  
-  <!-- Nowy przycisk do zapisania obrazków -->
-  <button (click)="saveAll()">Save All</button>
+  <span>Total Polygon Area: {{ totalQuadrangleArea | number:'1.2-2' }} </span>
+  <span>Rectangle Area: {{ totalRectangleArea | number:'1.2-2' }} </span>
+  <button (click)="saveAll()">Save All Configurations</button>
+  <button (click)="saveAllS()">Save Best Configurations</button>
+  <button (click)="saveToExcel()">Save to Excel</button>
 </div>
 
 <div class="quadrangle-container">

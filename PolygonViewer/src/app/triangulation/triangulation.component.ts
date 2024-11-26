@@ -13,6 +13,7 @@ export class TriangulationComponent implements OnInit, OnDestroy {
   @ViewChild('svg', { static: true }) svg!: ElementRef<SVGElement>;
   triangulations: Triangulation[] = [];
   selectedTriangulationIndex: number = 0;
+  viewBox: string = "0 0 1 1";  // Normalizowany zakres, od 0 do 1
   private triangulationDataSubscription: Subscription = new Subscription();
 
   constructor(private triangulationService: TriangulationService) {}

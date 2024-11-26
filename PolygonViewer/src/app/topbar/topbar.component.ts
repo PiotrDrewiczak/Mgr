@@ -15,24 +15,44 @@ export class TopbarComponent {
   constructor(
     private polygonService: PolygonService,
     private triangulationService: TriangulationService,
-    private quadrangleService: QuadrangleService
+    private quadrangleService: QuadrangleService,
   ) {}
+
+  isLoading: boolean = false;  // Zmienna kontrolująca widoczność spinnera
 
   generatePolygon() {
     this.polygonService.loadPolygonData().subscribe();
   }
 
   generateTriangulation() {
-    const polygonsData: Polygon[] = this.polygonService.getPolygonsData(); // Pobierz listę wielokątów
-    this.triangulationService.loadTriangulationData(polygonsData).subscribe((data: Triangulation[]) => {
-      this.triangulationService.setTriangulationData(data);
-    });
+    const polygonsData: Polygon[] = this.polygonService.getPolygonsData();
+    
+    if (polygonsData && polygonsData.length > 0) {
+      const polygonArea = polygonsData[0].area;
+
+      this.triangulationService.loadTriangulationData(polygonsData).subscribe((data: Triangulation[]) => {
+        
+        const triangulationsWithArea = data.map(triangulation => {
+          triangulation.area = polygonArea;
+          return triangulation;
+        });
+
+        this.triangulationService.setTriangulationData(triangulationsWithArea);
+      });
+    } else {
+      console.error('Brak danych wielokątów do wygenerowania triangulacji.');
+    }
   }
 
   generateRectangles() {
     const triangulationData = this.triangulationService.getTriangulationData();
-    this.quadrangleService.loadQuadrulationData(triangulationData).subscribe((data: Rectangles[][]) => {
-      this.quadrangleService.setQuadrangleData(data);
+    this.isLoading = true;  
+    this.quadrangleService.LoadQuadrangulationData(triangulationData).subscribe((data: Rectangles[][]) => {
+      this.quadrangleService.SetQuadrangulationData(data);
+      this.isLoading = false;
+    }, (error) => {
+      this.isLoading = false;
+      console.error('Error loading quadrangles:', error);
     });
   }
 }

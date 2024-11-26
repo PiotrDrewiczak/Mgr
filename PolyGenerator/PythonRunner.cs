@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using PolyGenerator.Models;
+using PolyGenerator.Models.Quad;
 using System.Diagnostics;
 
 namespace PolyGenerator
@@ -68,7 +69,8 @@ namespace PolyGenerator
             return polygons;
         }
 
-        public static List<List<RectanglesModel>> ProcessQuadrilaterals(string pythonPath, string pythonScriptPath, List<List<QuadrangulationModel>> allQuadrilateralCombinations)
+        public static List<List<RectanglesModel>> ProcessQuadrilaterals(string pythonPath,string pythonScriptPath,
+                      List<List<QuadrangulationModel>> allQuadrilateralCombinations)
         {
             var allRectanglesList = new List<List<RectanglesModel>>();
 
@@ -89,22 +91,21 @@ namespace PolyGenerator
 
                 foreach (var configuration in quadrangulation)
                 {
-                    // Przekształć dane czworokątów do formatu JSON oraz dodaj trójkąty niesparowane
                     string quadrilateralJson = JsonConvert.SerializeObject(new
                     {
                         quadrilaterals = configuration.Quadrangles.Select(quad => new List<List<double>>
-                {
-                    new List<double> { quad.A.X, quad.A.Y },
-                    new List<double> { quad.B.X, quad.B.Y },
-                    new List<double> { quad.C.X, quad.C.Y },
-                    new List<double> { quad.D.X, quad.D.Y }
-                }).ToList(),
+                        {
+                            new List<double> { quad.A.X, quad.A.Y },
+                            new List<double> { quad.B.X, quad.B.Y },
+                            new List<double> { quad.C.X, quad.C.Y },
+                            new List<double> { quad.D.X, quad.D.Y }
+                       }).ToList(),
                         unpairedTriangles = configuration.UnpairedTriangles.Select(triangle => new List<List<double>>
-                {
-                    new List<double> { triangle.A.X, triangle.A.Y },
-                    new List<double> { triangle.B.X, triangle.B.Y },
-                    new List<double> { triangle.C.X, triangle.C.Y }
-                }).ToList()
+                        {
+                            new List<double> { triangle.A.X, triangle.A.Y },
+                            new List<double> { triangle.B.X, triangle.B.Y },
+                            new List<double> { triangle.C.X, triangle.C.Y }
+                        }).ToList()
                     });
 
                     using (Process? process = Process.Start(start))
@@ -136,9 +137,7 @@ namespace PolyGenerator
                                         rect[2],  // Width
                                         rect[3]   // Height
                                     )).ToList();
-
                                     double totalArea = rectangles.Sum(r => r.Area);
-
                                     rectanglesForCurrentTriangulation.Add(new RectanglesModel
                                     {
                                         Rectangles = rectangles,
@@ -157,13 +156,9 @@ namespace PolyGenerator
                         }
                     }
                 }
-
                 allRectanglesList.Add(rectanglesForCurrentTriangulation);
             }
-
             return allRectanglesList;
         }
-
     }
 }
-

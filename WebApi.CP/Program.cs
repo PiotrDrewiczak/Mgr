@@ -1,7 +1,7 @@
-using WebApi.CP.Models;
-using PolyGenerator.Interfaces;
 using PolyGenerator;
+using PolyGenerator.Interfaces;
 using PolyGenerator.Scripts;
+using WebApi.CP.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,8 +22,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<AppSettingsModel>(
     builder.Configuration.GetSection(AppSettingsModel.ApplicationSettings));
 
-builder.Services.AddScoped<ITriangulation, Trangulation>();
-builder.Services.AddScoped<IQuadrulation, Quadrulation>();
+builder.Services.AddScoped<ITriangulation, TrangulationGenerator>();
+builder.Services.AddScoped<IQuadrangulation, QuadrangulationGenerator>();
+builder.Services.AddScoped<IExcelGenerator, ExcelGenerator>();
 builder.Services.AddScoped<IRectangleGenerator, RectangleGenerator>();
 builder.Services.AddScoped<IPolygonGenerator, PolygonGenerator>();
 
@@ -43,3 +44,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

@@ -18,7 +18,6 @@
             return X == other.X && Y == other.Y;
         }
 
-        // Implementacja metody GetHashCode
         public override int GetHashCode()
         {
             return X.GetHashCode() ^ Y.GetHashCode();

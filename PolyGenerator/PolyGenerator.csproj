@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EPPlus" Version="7.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.7" />
     <PackageReference Include="NetTopologySuite" Version="2.5.0" />
     <PackageReference Include="Poly2Tri.NetStandard" Version="1.0.2" />

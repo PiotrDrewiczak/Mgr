@@ -10,31 +10,27 @@ import { Rectangles } from '../models/rectangles.model';
 })
 export class QuadrangleService {
 
-  // Zmieniamy typ danych na List<List<Rectangles>>
-  private apiUrl = 'http://localhost:5136/quadrulation/quadrulate';
-  private quadrulationDataSubject = new BehaviorSubject<Rectangles[][]>([]); // Lista list prostokątów
+  private apiUrl = 'http://localhost:5136/Quadrangulation/quadrangulate';
+  private quadrulationDataSubject = new BehaviorSubject<Rectangles[][]>([]);
   quadrulationData$ = this.quadrulationDataSubject.asObservable();
 
   constructor(private http: HttpClient) { }
 
-  // Metoda zwracająca List<List<Rectangles>> dla każdej triangulacji
-  loadQuadrulationData(triangulation: Triangulation[]): Observable<Rectangles[][]> {
+  LoadQuadrangulationData(triangulation: Triangulation[]): Observable<Rectangles[][]> {
     const url = `${this.apiUrl}`;
     return this.http.post<Rectangles[][]>(url, triangulation).pipe(
       tap(data => {
-        console.log('Received data:', data);  // Logowanie odebranych danych
-        this.quadrulationDataSubject.next(data);  // Ustawianie pełnych danych
+        console.log('Received data:', data);
+        this.quadrulationDataSubject.next(data);
       })
     );
   }
 
-  // Ustawianie danych - lista list prostokątów
-  setQuadrangleData(data: Rectangles[][]) {
+  SetQuadrangulationData(data: Rectangles[][]) {
     this.quadrulationDataSubject.next(data);
   }
 
-  // Pobieranie danych - zwraca pełną listę list prostokątów
-  getQuadrangleData(): Rectangles[][] {
+  GetQuadrangulationData(): Rectangles[][] {
     return this.quadrulationDataSubject.value;
   }
 }

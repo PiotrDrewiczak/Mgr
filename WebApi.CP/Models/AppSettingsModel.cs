@@ -5,6 +5,7 @@
         public const string ApplicationSettings = "ApplicationSettings";
 
         public required string PythonPath { get; set; }
+        public required string ExcelPath { get; set; }
         public required string PythonScriptPath { get; set; }
         public required string PythonRectangleScriptPath { get; set; }
         public required string PolygonOutput { get; set; }
