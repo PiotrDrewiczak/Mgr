@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using PolyGenerator.Models;
+﻿using PolyGenerator.Models;
 
 namespace PolyGenerator.Interfaces
 {

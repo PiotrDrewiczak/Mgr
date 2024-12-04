@@ -26,7 +26,8 @@ builder.Services.AddScoped<ITriangulation, TrangulationGenerator>();
 builder.Services.AddScoped<IQuadrangulation, QuadrangulationGenerator>();
 builder.Services.AddScoped<IExcelGenerator, ExcelGenerator>();
 builder.Services.AddScoped<IRectangleGenerator, RectangleGenerator>();
-builder.Services.AddScoped<IPolygonGenerator, PolygonGenerator>();
+builder.Services.AddScoped<IPolygonGenerator, PolygonGenerator>(); 
+builder.Services.AddScoped<IPrediction, PredictionGenerator>();
 
 var app = builder.Build();
 

@@ -1,4 +1,6 @@
-﻿namespace PolyGenerator.Models
+﻿using PolyGenerator.Models.Polygon;
+
+namespace PolyGenerator.Models
 {
     public class ExportDataModel
     {

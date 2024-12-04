@@ -1,8 +1,7 @@
-﻿namespace PredictionModel.Models.Config
+﻿namespace MLModel.Models.Config
 {
     internal class DataFileSettings
     {
         public required string TrainingExcelPath { get; set; }
-        public required string PredictionExcelPath { get; set; }
     }
 }

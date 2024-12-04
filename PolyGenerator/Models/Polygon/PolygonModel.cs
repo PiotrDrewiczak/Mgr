@@ -1,4 +1,4 @@
-﻿namespace PolyGenerator.Models
+﻿namespace PolyGenerator.Models.Polygon
 {
     public class PolygonModel
     {

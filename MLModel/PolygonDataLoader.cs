@@ -1,7 +1,7 @@
 ﻿using OfficeOpenXml;
-using PredictionModel.Models;
+using MLModel.Models;
 
-namespace PredictionModel
+namespace MLModel
 {
     public class PolygonDataLoader
     {

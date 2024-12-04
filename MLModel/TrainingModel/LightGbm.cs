@@ -1,8 +1,8 @@
 ﻿using Microsoft.ML;
 using Microsoft.ML.AutoML;
-using PredictionModel.Models;
+using MLModel.Models;
 
-namespace PredictionModel.TrainingModel
+namespace MLModel.TrainingModel
 {
     public class LightGbm
     {

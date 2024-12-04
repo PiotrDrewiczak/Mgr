@@ -1,4 +1,4 @@
-﻿using PolyGenerator.Models;
+﻿using PolyGenerator.Models.Polygon;
 
 namespace PolyGenerator.Interfaces
 {

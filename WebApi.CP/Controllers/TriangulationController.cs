@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using PolyGenerator.Interfaces;
-using PolyGenerator.Models;
+using PolyGenerator.Models.Polygon;
 using PolyGenerator.Models.Triangle;
 using WebApi.CP.Models;
 

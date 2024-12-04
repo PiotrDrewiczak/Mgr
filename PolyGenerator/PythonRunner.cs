@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using PolyGenerator.Models;
+using PolyGenerator.Models.Polygon;
 using PolyGenerator.Models.Quad;
 using System.Diagnostics;
 

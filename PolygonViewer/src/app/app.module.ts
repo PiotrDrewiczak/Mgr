@@ -14,6 +14,7 @@ import { TriangulationService } from './triangulation/service/triangulation.serv
 import { QuadrangleComponent } from './quadrangle/quadrangle.component';
 import { QuadrangleService } from './quadrangle/service/quadrangle.service';
 import { ExcelExportService } from './quadrangle/service/excel-export.service';
+import { PredictionComponent } from './prediction/prediction.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { ExcelExportService } from './quadrangle/service/excel-export.service';
     TopbarComponent,
     TriangulationComponent,
     QuadrangleComponent,
+    PredictionComponent,
   ],
   imports: [
     BrowserModule,

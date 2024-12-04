@@ -1,4 +1,4 @@
-﻿using PolyGenerator.Models;
+﻿using PolyGenerator.Models.Polygon;
 using PolyGenerator.Models.Triangle;
 
 namespace PolyGenerator.Interfaces

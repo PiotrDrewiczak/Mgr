@@ -1,5 +1,5 @@
 ﻿using Microsoft.ML.Data;
-namespace PredictionModel.Models
+namespace MLModel.Models
 {
     public class PolygonInput
     {

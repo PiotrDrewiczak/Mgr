@@ -2,6 +2,7 @@
 using Poly2Tri.Triangulation.Polygon;
 using PolyGenerator.Interfaces;
 using PolyGenerator.Models;
+using PolyGenerator.Models.Polygon;
 using PolyGenerator.Models.Triangle;
 
 namespace PolyGenerator

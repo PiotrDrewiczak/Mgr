@@ -9,6 +9,8 @@
         public required string PythonScriptPath { get; set; }
         public required string PythonRectangleScriptPath { get; set; }
         public required string PolygonOutput { get; set; }
+        public required string ScriptPathPrediction { get; set; }
+        public required string PythonModelPath { get; set; }
         public int NumberOfPolygons { get; set; }
         public int NumberOfVertices { get; set; }
     }

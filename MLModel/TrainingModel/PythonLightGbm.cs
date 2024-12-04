@@ -1,18 +1,16 @@
 ﻿using Newtonsoft.Json;
-using PredictionModel.Models;
+using MLModel.Models;
 using System.Diagnostics;
 
-namespace PredictionModel.TrainingModel
+namespace MLModel.TrainingModel
 {
     public class PythonLightGbm
     {
         public static void TrainModel(List<PolygonInput> data, string pythonPath, string pythonScriptPath, string modelOutputPath)
         {
-            // Zapisanie danych do tymczasowego pliku JSON
             string tempJsonFile = Path.GetTempFileName();
             File.WriteAllText(tempJsonFile, JsonConvert.SerializeObject(data));
 
-            // Konfiguracja procesu
             var start = new ProcessStartInfo()
             {
                 FileName = pythonPath,
@@ -25,7 +23,6 @@ namespace PredictionModel.TrainingModel
 
             using (Process? process = Process.Start(start))
             {
-                // Rejestracja zdarzeń do odczytywania wyjścia i błędów
                 process.OutputDataReceived += (sender, args) =>
                 {
                     if (!string.IsNullOrEmpty(args.Data))
@@ -42,28 +39,23 @@ namespace PredictionModel.TrainingModel
                     }
                 };
 
-                // Rozpoczęcie asynchronicznego odczytywania wyjścia i błędów
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
 
-                // Oczekiwanie na zakończenie procesu
                 process.WaitForExit();
             }
 
-            // Usunięcie tymczasowego pliku JSON po zakończeniu pracy
             File.Delete(tempJsonFile);
         }
         public static PolygonInput Prediction(PolygonInput inputData, string pythonPath, string scriptPath, string modelPath)
         {
-            string tempInputJson = Path.GetTempFileName(); // Plik tymczasowy na dane wejściowe
-            string tempOutputJson = Path.GetTempFileName(); // Plik tymczasowy na dane wyjściowe
+            string tempInputJson = Path.GetTempFileName();
+            string tempOutputJson = Path.GetTempFileName();
 
             try
             {
-                // Zapisanie danych wejściowych do pliku JSON
                 File.WriteAllText(tempInputJson, JsonConvert.SerializeObject(inputData));
 
-                // Konfiguracja procesu
                 var start = new ProcessStartInfo
                 {
                     FileName = pythonPath,
@@ -76,7 +68,6 @@ namespace PredictionModel.TrainingModel
 
                 using (Process? process = Process.Start(start))
                 {
-                    // Czytanie błędów z konsoli
                     string? error = process?.StandardError.ReadToEnd();
                     if (!string.IsNullOrEmpty(error))
                     {
@@ -85,14 +76,12 @@ namespace PredictionModel.TrainingModel
 
                     process?.WaitForExit();
 
-                    // Sprawdzenie, czy proces zakończył się sukcesem
                     if (process?.ExitCode != 0)
                     {
                         throw new Exception("Proces Python zakończył się błędem.");
                     }
                 }
 
-                // Wczytanie wynikowego pliku JSON z predykcjami
                 if (File.Exists(tempOutputJson))
                 {
                     string outputJson = File.ReadAllText(tempOutputJson);
@@ -108,7 +97,6 @@ namespace PredictionModel.TrainingModel
             }
             finally
             {
-                // Czyszczenie plików tymczasowych
                 if (File.Exists(tempInputJson))
                     File.Delete(tempInputJson);
                 if (File.Exists(tempOutputJson))
