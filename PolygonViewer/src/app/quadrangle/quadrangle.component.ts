@@ -167,35 +167,75 @@ export class QuadrangleComponent implements OnInit, OnDestroy {
     }
   }
 
-  saveAll(): void {
+  saveAllConfigurations(): void {
+    if (!this.triangulations || !this.quadrangles) {
+      console.error("Brak danych triangulacji lub czworokątów.");
+      return;
+    }
+  
     this.triangulations.forEach((triangulation, triangulationIndex) => {
       const quadrangleList = this.quadrangles[triangulationIndex];
   
+      if (!quadrangleList) {
+        console.error(`Brak czworokątów dla triangulacji o indeksie ${triangulationIndex}`);
+        return;
+      }
+  
       quadrangleList.forEach((rectangles) => {
+        if (!rectangles || !rectangles.rectangles) {
+          console.error("Brak danych prostokątów w bieżącej konfiguracji.");
+          return;
+        }
+  
+        const totalRectangleArea = rectangles.totalArea || 0;
+        const totalPolygonArea = triangulation.area || 0;
+  
+        const coveragePercentage = totalPolygonArea > 0
+          ? (totalRectangleArea / totalPolygonArea) * 100
+          : 0;
+  
         // Tworzenie ukrytego SVG
         const hiddenSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         hiddenSvg.setAttribute('width', '1600');
         hiddenSvg.setAttribute('height', '1500');
         hiddenSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
   
-        // Rysowanie triangulacji w ukrytym SVG
-        triangulation.triangles.forEach(triangle => {
-          const points = [
-            `${triangle.a.x},${triangle.a.y}`,
-            `${triangle.b.x},${triangle.b.y}`,
-            `${triangle.c.x},${triangle.c.y}`
-          ].join(' ');
+        // Dodanie białego tła
+        const backgroundRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        backgroundRect.setAttribute('x', '0');
+        backgroundRect.setAttribute('y', '0');
+        backgroundRect.setAttribute('width', '1600');
+        backgroundRect.setAttribute('height', '1500');
+        backgroundRect.setAttribute('fill', 'white'); // Ustawienie białego tła
+        hiddenSvg.appendChild(backgroundRect);
   
-          const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-          polygon.setAttribute('points', points);
-          polygon.setAttribute('stroke', 'black');
-          polygon.setAttribute('stroke-width', '2');
-          polygon.setAttribute('fill', 'none');
-          hiddenSvg.appendChild(polygon);
-        });
+        // Rysowanie triangulacji
+        if (triangulation.triangles && triangulation.triangles.length > 0) {
+          triangulation.triangles.forEach(triangle => {
+            const points = [
+              `${triangle.a.x},${triangle.a.y}`,
+              `${triangle.b.x},${triangle.b.y}`,
+              `${triangle.c.x},${triangle.c.y}`
+            ].join(' ');
   
-        // Rysowanie prostokątów w ukrytym SVG
+            const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            polygon.setAttribute('points', points);
+            polygon.setAttribute('stroke', 'black');
+            polygon.setAttribute('stroke-width', '2');
+            polygon.setAttribute('fill', 'none');
+            hiddenSvg.appendChild(polygon);
+          });
+        } else {
+          console.warn(`Brak trójkątów do rysowania dla triangulacji ${triangulationIndex}`);
+        }
+  
+        // Rysowanie prostokątów
         rectangles.rectangles.forEach(rectangle => {
+          if (!rectangle) {
+            console.warn("Pominięto pusty prostokąt.");
+            return;
+          }
+  
           const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
           rect.setAttribute('x', rectangle.x.toString());
           rect.setAttribute('y', rectangle.y.toString());
@@ -207,24 +247,54 @@ export class QuadrangleComponent implements OnInit, OnDestroy {
           hiddenSvg.appendChild(rect);
         });
   
-        this.calculateCoveragePercentage();
-        const coveragePercentage = this.coveragePercentage.toFixed(0); 
+        // Dodanie tekstu z Coverage Percentage
+        const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        textElement.setAttribute('x', '1590'); // Pozycja X (blisko prawej krawędzi z 10px marginesem)
+        textElement.setAttribute('y', '30');  // Pozycja Y
+        textElement.setAttribute('font-size', '44');
+        textElement.setAttribute('fill', 'black');
+        textElement.setAttribute('text-anchor', 'end'); // Wyrównanie do prawej strony
+        textElement.textContent = `Coverage: ${coveragePercentage.toFixed(2)}%`;
+        hiddenSvg.appendChild(textElement);
   
-        const fileNumber = triangulationIndex
-        const fileName = `${fileNumber}_${coveragePercentage}.svg`;
-  
+        // Konwersja SVG do obrazu PNG
         const svgData = new XMLSerializer().serializeToString(hiddenSvg);
         const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
         const svgUrl = URL.createObjectURL(svgBlob);
-        const downloadLink = document.createElement('a');
-        downloadLink.href = svgUrl;
-        downloadLink.download = fileName;
-        downloadLink.click();
+  
+        const image = new Image();
+        image.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = 1600;
+          canvas.height = 1500;
+  
+          const context = canvas.getContext('2d');
+          if (context) {
+            // Rysowanie SVG na canvasie
+            context.drawImage(image, 0, 0);
+  
+            // Eksportowanie canvas do PNG
+            canvas.toBlob((blob) => {
+              if (blob) {
+                const fileNumber = triangulationIndex;
+                const fileName = `${fileNumber}_${coveragePercentage.toFixed(0)}.png`;
+  
+                const downloadLink = document.createElement('a');
+                downloadLink.href = URL.createObjectURL(blob);
+                downloadLink.download = fileName;
+                downloadLink.click();
+              }
+            }, 'image/png');
+          }
+        };
+  
+        image.src = svgUrl;
       });
     });
   }
-
-saveAllS(): void {
+  
+  
+saveBestConfigurations(): void {
   this.triangulations.forEach((triangulation, triangulationIndex) => {
     const quadrangleList = this.quadrangles[triangulationIndex]; 
 

@@ -29,7 +29,6 @@ namespace PolyGenerator
                     continue;
                 }
 
-                // Convert points to Poly2Tri format
                 var poly2TriPoints = new List<PolygonPoint>();
                 foreach (var point in polygonModel.Vertices)
                 {
